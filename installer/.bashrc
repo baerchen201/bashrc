@@ -1,5 +1,7 @@
 #/bin/false
 
+echo "Please wait, installing bashrc..."
+
 # Install custom bashrc
 cp -f /usr/local/bin/bashrc/.bashrc ~
 cp -f /usr/local/bin/bashrc/.bash_preferences ~
