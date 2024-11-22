@@ -5,6 +5,9 @@
 # Hide welcome message
 hide_welcome_message=0
 
+# Hide "- nested level <>" in welcome message
+hide_nested_message=0
+
 # Display exit code on success
 display_zero_exitcode=0
 

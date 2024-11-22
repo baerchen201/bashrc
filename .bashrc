@@ -12,7 +12,7 @@ if [[ $- == *i* ]]; then
 		fi
 		date "+%A %d. %B %Y - %H:%M"
 		echo -en "bash $(if ! [ ${BASH_VERSINFO[4]} = "release" ];then echo "${BASH_VERSINFO[4]} ";fi )${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}\e[90m.${BASH_VERSINFO[2]}.${BASH_VERSINFO[3]}\e[0m"
-		if (( $SHLVL > 1 )); then echo -e " - nested level $(( $SHLVL - 1 ))"; else echo ""; fi
+		if (( $SHLVL > 1 )) && ! [ "$hide_nested_message" = "1" ]; then echo -e " - nested level $(( $SHLVL - 1 ))"; else echo ""; fi
 	fi
 
 
