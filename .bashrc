@@ -63,4 +63,7 @@ $_suffix"
 		alias yo="git status"
 		alias yaa="git push -f"
 	fi
+	
+	# Only enable extglob in interactive mode, otherwise the script should specify it
+	shopt -s extglob
 fi
