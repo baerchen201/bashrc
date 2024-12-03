@@ -1,18 +1,18 @@
+# Import pre-bashrc script if exists
+[[ -f ~/.bashrc- ]] && . ~/.bashrc-
+
+
 # Check for interactive mode
 if [[ $- == *i* ]]; then
-	# Load user preferences
-	if [ -f ~/.bash_preferences ]; then source ~/.bash_preferences; fi
-
-
 	# Welcome message
-	if ! [ "$hide_welcome_message" = "1" ]; then
+	if [ -z "$hide_welcome_message" ]; then
 		if ! (( $SHLVL > 1 )); then
 			clear
 			echo "Welcome, $USER!"
 		fi
-		date "+%A %d. %B %Y - %H:%M"
-		echo -en "bash $(if ! [ ${BASH_VERSINFO[4]} = "release" ];then echo "${BASH_VERSINFO[4]} ";fi )${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}\e[90m.${BASH_VERSINFO[2]}.${BASH_VERSINFO[3]}\e[0m"
-		if (( $SHLVL > 1 )) && ! [ "$hide_nested_message" = "1" ]; then echo -e " - nested level $(( $SHLVL - 1 ))"; else echo ""; fi
+		LC_TIME="en_US.UTF-8" date "+%A %d. %B %Y - %H:%M"
+		echo -en "bash $(if [ ${BASH_VERSINFO[4]} != "release" ];then echo "${BASH_VERSINFO[4]} ";fi )${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}\e[90m.${BASH_VERSINFO[2]}.${BASH_VERSINFO[3]}\e[0m"
+		if (( $SHLVL > 1 )) && [ -z "$ignore_shlvl" ]; then echo -e " - nested level $(( "$SHLVL" - 1 ))"; else echo ""; fi
 	fi
 
 
@@ -21,7 +21,7 @@ if [[ $- == *i* ]]; then
 		_e=$?
 		if let _COUNTER++; then
 			if [ $_e = 0 ]; then
-				if ! [ "$display_zero_exitcode" = "1" ]; then return 0; fi
+				if [ -z "$display_zero_exitcode" ]; then return 0; fi
 				echo -en "\e[90m"
 			else
 				echo -en "\e[1;91m"
@@ -41,29 +41,40 @@ if [[ $- == *i* ]]; then
 			echo "$PWD"
 		fi
 	}
-	_suffix="\[\e[90m\]>> \[\e[0m\]"
-	PS2="$_suffix"
-	PS1="\[\e[0m\
-\e[91m\]\u\[\e[93m\]@\[\e[94m\]\H\[\e[0m\] \
-\$(_pWd)\
-$_suffix"
-
-
-	# Git aliases
-	_git_addandcommit () {
-		if git add $@; then
-			git commit
+	_shlvl () {
+		if (( "$SHLVL" > 1 )); then 
+			echo -n "\[$_gray\]"
+			if [ "$SHLVL" = 2 ]; then
+				echo -n ">> "
+			else
+				echo -n "$(( "$SHLVL" - 1 ))> "
+			fi
 		fi
 	}
-	if ! [ "$disable_git_aliases" = "1" ]; then
-		alias yeet="git push"
-		alias yoink="git pull"
-		alias yikes="git reset --hard"
-		alias yes=_git_addandcommit
-		alias yo="git status"
-		alias yaa="git push -f"
-	fi
+
+	# Colors for prompt
+	_red=$(tput setaf 9)
+	_yellow=$(tput setaf 11)
+	_blue=$(tput setaf 12)
+	_gray=$(tput setaf 8)
+	_reset=$(tput sgr0)
 	
-	# Only enable extglob in interactive mode, otherwise the script should specify it
+	_suffix="\[$_gray\]>> \[$_reset\]"
+	PS1="\[$_reset\]\
+$(if [ -z "$ignore_shlvl" ]; then _shlvl; fi)\
+\[$_red\]\u\[$_yellow\]@\[$_blue\]\H\[$_reset\] \
+\$(_pWd)\
+$_suffix"
+	PS2="$_suffix"
+
+
+	# Only modify glob in interactive mode, otherwise the script should specify it
 	shopt -s extglob
+	shopt -s globstar
+
+	
+	# Import post-bashrc script if exists (if running in interactive mode only)
+	[[ -f ~/.bashrc+ ]] && . ~/.bashrc+
+	true # Reset exit code to 0
 fi
+
