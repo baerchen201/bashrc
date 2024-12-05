@@ -53,11 +53,19 @@ if [[ $- == *i* ]]; then
 	}
 
 	# Colors for prompt
-	_red=$(tput setaf 9)
-	_yellow=$(tput setaf 11)
-	_blue=$(tput setaf 12)
-	_gray=$(tput setaf 8)
-	_reset=$(tput sgr0)
+	if ! [ "$TERM" = "linux" ]; then
+		_red=$(tput setaf 9)
+		_yellow=$(tput setaf 11)
+		_blue=$(tput setaf 12)
+		_gray=$(tput setaf 8)
+		_reset=$(tput sgr0)
+	else
+		_red="\e[91m"
+		_yellow="\e[93m"
+		_blue="\e[94m"
+		_gray="\e[38m"
+		_reset="\e[0m"
+	fi
 	
 	_suffix="\[$_gray\]>> \[$_reset\]"
 	PS1="\[$_reset\]\
