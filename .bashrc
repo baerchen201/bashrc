@@ -3,6 +3,9 @@
 
 # Check for interactive mode
 if [[ $- == *i* ]]; then
+  now() {
+    LC_TIME="en_US.UTF-8" date "+%A %d. %B %Y - %H:%M"
+  }
   welcome() {
     # Welcome message
     if [ -z "$hide_welcome_message" ]; then
@@ -10,7 +13,7 @@ if [[ $- == *i* ]]; then
         clear
         echo "Welcome, $USER!"
       fi
-      LC_TIME="en_US.UTF-8" date "+%A %d. %B %Y - %H:%M"
+      now
       echo -en "bash $(if [ ${BASH_VERSINFO[4]} != "release" ]; then echo "${BASH_VERSINFO[4]} "; fi)${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}\e[90m.${BASH_VERSINFO[2]}.${BASH_VERSINFO[3]}\e[0m"
       if (($SHLVL > 1)) && [ -z "$ignore_shlvl" ]; then echo -e " - nested level $(("$SHLVL" - 1))"; else echo ""; fi
     fi
